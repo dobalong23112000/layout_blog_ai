@@ -1,9 +1,7 @@
 import React from "react";
 import CardHorizontalWithAuthor from "../CardHorizontalWithAuthor";
 import CardPostAuthor  from "../CardPostAuthor";
-
-export default function FeaturedSection() {
-  const latestUpdates = [
+const latestUpdates = [
     {
       image: "/images/warning/2.jpg",
       title: "Unreal Engine 5: What Developers Need to Know",
@@ -73,24 +71,15 @@ export default function FeaturedSection() {
         avatar: "/images/warning/1.jpg",
       },
     },
-    {
-      image: "/images/warning/2.jpg",
-      title: "Inside the Mind of a Game Narrative Designer",
-      description: "What it takes to craft compelling storylines in modern video games.",
-      publishDate: "July 14, 2025",
-      readTime: "7 min read",
-      author: {
-        name: "Morgan Reid",
-        avatar: "/images/warning/1.jpg",
-      },
-    },
+    
   ];
 
+export default function FeaturedSection() {
   return (
     <section className="grid grid-cols-1 md:grid-cols-12 gap-6 py-8">
       {/* LATEST UPDATES */}
       <div className="md:col-span-9">
-        <h2 className="text-xl font-semibold mb-4">LATEST UPDATES</h2>
+        <h2 className="text-xl font-semibold mb-4 text-primary">LATEST UPDATES</h2>
         <div className="space-y-6">
           {latestUpdates.map((item, index) => (
             <CardHorizontalWithAuthor key={index} {...item} />
@@ -100,7 +89,7 @@ export default function FeaturedSection() {
 
       {/* FEATURED BLOGS */}
       <div className="md:col-span-3">
-        <h2 className="text-xl font-semibold mb-4">FEATURED BLOGS</h2>
+        <h2 className="text-xl font-semibold mb-4 text-primary">FEATURED BLOGS</h2>
         <div className="space-y-6">
           {featuredBlogs.map((item, index) => (
             <CardPostAuthor key={index} {...item} />

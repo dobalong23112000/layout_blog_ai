@@ -2,7 +2,7 @@ import CardHorizontalWithImage from "../CardHorizontalWithImage";
 
 const dummyData = [
   {
-    image: "images/warning/5.jpg",
+    image: "/images/warning/5.jpg",
     tag: "Tech",
     title: "How AI is Changing Everything",
     description:
@@ -10,7 +10,7 @@ const dummyData = [
     date: "July 18, 2025",
   },
   {
-    image: "images/warning/5.jpg",
+    image: "/images/warning/5.jpg",
     tag: "Design",
     title: "The Future of UX in 2025",
     description:
@@ -18,7 +18,7 @@ const dummyData = [
     date: "July 16, 2025",
   },
   {
-    image: "images/warning/5.jpg",
+    image: "/images/warning/5.jpg",
     tag: "Code",
     title: "10 VSCode Extensions for Productivity",
     description:
@@ -26,7 +26,7 @@ const dummyData = [
     date: "July 14, 2025",
   },
   {
-    image: "images/warning/5.jpg",
+    image: "/images/warning/5.jpg",
     tag: "Cloud",
     title: "Serverless Explained Simply",
     description:
@@ -37,8 +37,8 @@ const dummyData = [
 
 export default function CardGridSection() {
   return (
-    <section className="py-8 bg-gray-50">
-        <h2 className="text-xl font-bold uppercase mb-6">Featured Articles</h2>
+    <section className="py-8">
+        <h2 className="text-xl font-bold uppercase mb-6 text-primary">Featured Articles</h2>
       <div className="grid grid-cols-12 gap-6">
         {dummyData.map((item, index) => (
           <div key={index} className="col-span-12 sm:col-span-6 lg:col-span-6">

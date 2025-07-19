@@ -1,6 +1,8 @@
 import "./globals.css";
 import Footer from "../components/Footer"
-
+import Link from "next/link";
+import { cx } from "../utils";
+import { Inter, Manrope } from "next/font/google";
 export const metadata = {
   title: {
     default: "My Supabase Blog",
@@ -21,17 +23,32 @@ export const metadata = {
   },
   metadataBase: new URL("https://yoursite.com")
 }
+const inter = Inter({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-in",
+});
+
+const manrope = Manrope({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-mr",
+});
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
-      <body className={" bg-white text-gray-900 min-h-screen flex flex-col"}>
-        <header className="py-6 px-4 border-b shadow-sm">
+    <html lang="en" suppressHydrationWarning>
+      <body className={cx(
+          inter.variable,
+          manrope.variable,
+          "font-mr bg-light dark:bg-dark"
+        )}>
+        <header className="py-6 px-4 border-b shadow-sm bg-primary text-white">
           <nav className="max-w-5xl mx-auto flex justify-between items-center">
-            <a href="/" className="text-xl font-bold">My Supabase Blog</a>
+            <Link href="/" className="text-2xl font-bold uppercase">PureVital</Link>
             <div className="space-x-4">
-              <a href="/blog" className="text-sm font-medium hover:underline">Blog</a>
-              <a href="/about" className="text-sm font-medium hover:underline">About</a>
+              <Link href="/blog" className="text-sm font-medium hover:underline">Blog</Link>
+              <Link href="/about" className="text-sm font-medium hover:underline">About</Link>
             </div>
           </nav>
         </header>
@@ -41,5 +58,5 @@ export default function RootLayout({ children }) {
         <Footer />
       </body>
     </html>
-  )
+  );
 }

@@ -1,5 +1,5 @@
-import React from 'react';
 
+import Image from 'next/image';
 export default function CardPostAuthor({
   author,
   title,
@@ -8,13 +8,16 @@ export default function CardPostAuthor({
   readTime,
 }) {
   return (
-    <div className="border shadow-sm overflow-hidden bg-white flex flex-col transition hover:shadow-md">
+    <div className="shadow shadow-md overflow-hidden bg-white flex flex-col transition hover:shadow-md rounded-md">
       {/* Author Header */}
-      <div className="flex items-center gap-3 bg-black px-4 py-3">
-        <img
+      <div className="flex items-center gap-3 bg-primary px-4 py-3">
+        <Image
           src={author.avatar}
           alt={author.name}
-          className="w-15 h-15  object-cover"
+          width={800}
+          height={600}
+          className="w-15 h-15 object-cover rounded-full"
+          priority
         />
         <span className="text-sm font-medium text-gray-700 text-white">{author.name}</span>
       </div>
@@ -22,7 +25,7 @@ export default function CardPostAuthor({
       {/* Content */}
       <div className="flex flex-col gap-3 px-4 py-4">
         {/* Title */}
-        <h3 className="text-lg font-semibold text-gray-900 hover:text-blue-600 transition cursor-pointer">
+        <h3 className="text-lg font-semibold text-gray-900 hover:text-primary transition cursor-pointer">
           {title}
         </h3>
 

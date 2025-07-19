@@ -1,4 +1,3 @@
-"use client";
 import { components } from "../components/MDXComponents";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";

@@ -35,6 +35,7 @@ export const components = {
         height={0}
         style={{ height: "auto" }}
         className="rounded-md shadow-md object-cover"
+        priority
       />
       {alt && (
         <figcaption className="text-sm text-gray-500 text-center mt-2 italic">
