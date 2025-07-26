@@ -1,37 +1,23 @@
 import CardHorizontalWithAuthor from "../../components/CardHorizontalWithAuthor";
 import CardPostAuthor from "../../components/CardPostAuthor";
 import { supabase } from "../../lib/supabaseClient";
+import PaginationControls from '../../components/PaginationControls'
+
 export const dynamic = "force-dynamic";
-export default async function BlogListPage() {
-  const { data: posts } = await supabase
+const PAGE_SIZE = 5;
+export default async function BlogListPage({ searchParams  }) {
+  const { page } = await searchParams
+  const currentPage = parseInt(page || "1", 10);
+  const from = (currentPage - 1) * PAGE_SIZE;
+  const to = from + PAGE_SIZE - 1;
+  const { data: posts, count } = await supabase
     .from("posts")
-    .select("*")
+    .select("*, authors(*)", { count: "exact" })
     .eq("is_published", true)
-    .order("published_at", { ascending: false });
-  const featuredBlogs = [
-    {
-      image: "/images/warning/2.jpg",
-      title: "5 Indie Games That Are Redefining the Genre",
-      description: "A closer look at the innovative ideas coming out of the indie game scene.",
-      publishDate: "July 15, 2025",
-      readTime: "5 min read",
-      author: {
-        name: "Chris Taylor",
-        avatar: "/images/warning/1.jpg",
-      },
-    },
-    {
-      image: "/images/warning/2.jpg",
-      title: "Inside the Mind of a Game Narrative Designer",
-      description: "What it takes to craft compelling storylines in modern video games.",
-      publishDate: "July 14, 2025",
-      readTime: "7 min read",
-      author: {
-        name: "Morgan Reid",
-        avatar: "/images/warning/1.jpg",
-      },
-    },
-  ];
+    .order("published_at", { ascending: false })
+    .range(from, to);
+  const totalPages = Math.ceil((count || 0) / PAGE_SIZE);
+
   return (
     <section className="grid grid-cols-1 md:grid-cols-12 gap-6 py-8">
       <div className="md:col-span-9">
@@ -39,16 +25,18 @@ export default async function BlogListPage() {
         {posts?.map((item, index) => (
           <CardHorizontalWithAuthor key={index} {...item} />
         ))}
+
+        {/* Pagination Controls */}
+        <PaginationControls totalPages={totalPages} currentPage={currentPage} />
       </div>
 
       <div className="md:col-span-3">
         <h2 className="text-xl font-semibold mb-4 text-primary">FEATURED BLOGS</h2>
         <div className="space-y-6">
-          {featuredBlogs.map((item, index) => (
+          {posts.map((item, index) => (
             <CardPostAuthor key={index} {...item} />
           ))}
         </div>
-        
       </div>
     </section>
   );

@@ -4,165 +4,189 @@ import BlogContent from "../../../components/BlogContent";
 import CardPostAuthor from "../../../components/CardPostAuthor";
 import CardWithImage from "../../../components/CardWithImage";
 import CardVerticalWithTag from "../../../components/CardVerticalWithTag";
+import SocialShareButtons from "../../../components/SocialShareButtons";
 
-export const dynamic = "force-dynamic"; // Đảm bảo route không bị cache
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({ params }) {
   const { slug } = await params;
   const { data, error } = await supabase
     .from("posts")
-    .select("*")
+    .select("*, authors(*)")
     .eq("slug", slug)
     .single();
 
   if (!data || error) return {};
 
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://yourwebsite.com";
+
   return {
     title: data.title,
     description: data.description ?? "",
+    keywords: data.tags?.join(", ") ?? "",
+    robots: "index, follow",
+    alternates: {
+      canonical: `${baseUrl}/blog/${slug}`,
+    },
+    openGraph: {
+      title: data.title,
+      description: data.description,
+      type: "article",
+      url: `${baseUrl}/blog/${slug}`,
+      images: [
+        {
+          url: data.image || `${baseUrl}/default-og.jpg`,
+          alt: data.imageAlt || data.title,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: data.title,
+      description: data.description,
+      images: [data.image || `${baseUrl}/default-og.jpg`],
+    },
   };
 }
 
 export default async function Page({ params }) {
   const { slug } = await params;
+
+  // Fetch main post
   const { data, error } = await supabase
     .from("posts")
-    .select("*")
+    .select("*, authors(*)")
     .eq("slug", slug)
     .single();
-  const featuredBlogs = [
-    {
-      image: "/images/warning/2.jpg",
-      title: "5 Indie Games That Are Redefining the Genre",
-      description: "A closer look at the innovative ideas coming out of the indie game scene.",
-      publishDate: "July 15, 2025",
-      readTime: "5 min read",
-      author: {
-        name: "Chris Taylor",
-        avatar: "/images/warning/1.jpg",
-      },
-    },
-    {
-      image: "/images/warning/2.jpg",
-      title: "Inside the Mind of a Game Narrative Designer",
-      description: "What it takes to craft compelling storylines in modern video games.",
-      publishDate: "July 14, 2025",
-      readTime: "7 min read",
-      author: {
-        name: "Morgan Reid",
-        avatar: "/images/warning/1.jpg",
-      },
-    },
-  ];
-  const trendingPosts = [
-    {
-      image: "/images/warning/3.jpg",
-      tag: "Tips",
-      title: "Top 10 Unreal Engine Tips for 2025",
-      description: "Learn what’s new in UE5 and how to optimize your indie workflow.",
-      date: "July 12, 2025",
-    },
-    {
-      image: "/images/warning/3.jpg",
-      tag: "Battle",
-      title: "Unity vs Godot: Which One Wins?",
-      description: "We dive deep into features, performance, and community support.",
-      date: "July 10, 2025",
-    },
-    {
-      image: "/images/warning/3.jpg",
-      tag: "Battle",
-      title: "Unity vs Godot: Which One Wins?",
-      description: "We dive deep into features, performance, and community support.",
-      date: "July 10, 2025",
-    },
-  ];
+
   if (!data || error) return notFound();
-  const cards = [
-    {
-      image: "/images/warning/3.jpg",
-      tag: "Technology",
-      title: "AI in Everyday Life",
-      description: "How artificial intelligence is shaping our daily experiences.",
+
+  const {
+    title,
+    description,
+    image,
+    imageAlt,
+    content,
+    tags,
+    authors,
+    published_at,
+    updated_at,
+  } = data;
+
+  // Fetch additional posts for suggestions
+  const { data: posts } = await supabase
+    .from("posts")
+    .select("image, title, description, slug, published_at, tags, image_alt, authors(*), categories(*)")
+    .eq("is_published", true)
+    .neq("slug", slug)
+    .order("published_at", { ascending: false }).range(0,5);
+
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://yourwebsite.com";
+
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "NewsArticle",
+    headline: title,
+    description,
+    image: image ? `${baseUrl}${image}` : `${baseUrl}/default-og.jpg`,
+    datePublished: new Date(published_at).toISOString(),
+    dateModified: new Date(updated_at || published_at).toISOString(),
+    author: [
+      {
+        "@type": "Person",
+        name: authors?.name || "Unknown",
+        url: authors?.url || "https://twitter.com",
+      },
+    ],
+    publisher: {
+      "@type": "Organization",
+      name: "Your Website Name",
+      logo: {
+        "@type": "ImageObject",
+        url: `${baseUrl}/logo.png`,
+      },
     },
-    {
-      image: "/images/warning/3.jpg",
-      tag: "Urban",
-      title: "Smart Cities of Tomorrow",
-      description: "Discover innovations in urban design and infrastructure.",
-    },
-    {
-      image: "/images/warning/3.jpg",
-      tag: "Health",
-      title: "Digital Health Trends 2025",
-      description: "Explore the future of healthcare through digital tools.",
-    },
-    
-  ];
+    mainEntityOfPage: `${baseUrl}/blog/${slug}`,
+  };
+
   return (
-    <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
-      <div className="md:col-span-9">
-        <article className="prose lg:prose-xl mx-auto px-4 py-8 ">
-          <h1 className="text-4xl font-bold mb-4">{data.title}</h1>
-          <div className="">
-            <div
-              className="col-span-12 lg:col-span-8 font-in prose sm:prose-base md:prose-lg max-w-max
-      prose-blockquote:bg-accent/20 
-      prose-blockquote:p-2
-      prose-blockquote:px-6
-      prose-blockquote:border-accent
-      prose-blockquote:not-italic
-      prose-blockquote:rounded-r-lg
-      prose-figure:relative
-      prose-figcaption:mt-1
-      prose-figcaption:mb-2
-      prose-li:marker:text-accent
-      dark:prose-invert
-      dark:prose-blockquote:border-accentDark
-      dark:prose-blockquote:bg-accentDark/20
-      dark:prose-li:marker:text-accentDark
-      first-letter:text-3xl sm:first-letter:text-5xl"
-            >
-              <BlogContent content={data.content} />
-            </div>
+    <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 px-4 md:px-8 pb-10">
+      {/* JSON-LD SEO */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+
+      {/* Main content */}
+      <div className="lg:col-span-9 col-span-12">
+        <article className="prose lg:prose-xl mx-auto pb-8 dark:prose-invert">
+          <div
+            className="prose-blockquote:bg-accent/20 prose-blockquote:border-accent
+            prose-blockquote:p-4 prose-blockquote:rounded-r-lg
+            prose-li:marker:text-accent dark:prose-blockquote:bg-accentDark/20
+            dark:prose-blockquote:border-accentDark dark:prose-li:marker:text-accentDark
+            first-letter:text-3xl sm:first-letter:text-5xl"
+          >
+            <BlogContent content={content} />
           </div>
         </article>
       </div>
-      <div className="md:col-span-3 flex flex-col gap-6 md:mt-30">
-        {/* Featured Blogs Section */}
+
+      {/* Sidebar */}
+      <div className="lg:col-span-3 col-span-12 flex flex-col gap-8 sm:mt-30">
+        {/* Featured */}
         <section>
-          <h2 className="text-lg font-semibold text-gray-900 mb-3 uppercase text-primary">Featured Blogs</h2>
+          <h2 className="text-lg font-semibold text-primary uppercase mb-3">
+            Featured Blogs
+          </h2>
           <div className="space-y-5">
-            {featuredBlogs.map((item, index) => (
+            {posts.slice(0, 3).map((item, index) => (
               <CardPostAuthor key={index} {...item} />
             ))}
           </div>
         </section>
 
-        {/* Trending Section */}
-        <section className="space-y-4">
-          <h2 className="text-lg font-semibold uppercase text-gray-900 mb-3 text-primary">Trending</h2>
-          {trendingPosts.map((post, index) => (
-            <CardWithImage key={index} {...post} />
-          ))}
+        {/* Trending */}
+        <section>
+          <h2 className="text-lg font-semibold text-primary uppercase mb-3">
+            Trending
+          </h2>
+          <div className="space-y-4">
+            {posts.slice(3, 6).map((post, index) => (
+              <CardWithImage key={index} {...post} />
+            ))}
+          </div>
         </section>
       </div>
-      <div className="md:col-span-9 pb-6">
-        <h2 className="text-xl font-bold uppercase mb-6 text-primary">You May also like</h2>
-        <div className="grid grid-cols-12 gap-6">
-          {cards.map((card, idx) => (
-            <div key={idx} className="sm:col-span-4 col-span-12">
-              <CardVerticalWithTag
-                image={card.image}
-                tag={card.tag}
-                title={card.title}
-                description={card.description}
-              />
-            </div>
+
+      {/* Social Sharing */}
+      <div className="col-span-12 border-b pb-6 border-gray-300">
+        <h3 className="text-lg font-semibold mb-4">📤 Share this article</h3>
+        <SocialShareButtons
+          shareUrl={`${baseUrl}/blog/${slug}`}
+          shareText={title}
+          instagramProfileUrl="https://www.instagram.com/your_actual_profile"
+        />
+      </div>
+
+      {/* Suggested Posts */}
+      <div className="col-span-12">
+        <h2 className="text-xl font-bold uppercase mb-6 text-primary">
+          📰 You may also like
+        </h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {posts.slice(3, 6).map((card, idx) => (
+            <CardVerticalWithTag
+              key={idx}
+              image={card.image}
+              tag={card.tags?.[0] ?? ""}
+              image_alt={card.image_alt}
+              title={card.title}
+              description={card.description}
+            />
           ))}
         </div>
       </div>
     </div>
-
   );
 }

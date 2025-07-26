@@ -3,16 +3,18 @@ import React from "react";
 import { ArrowRight } from "lucide-react"; // icon mũi tên
 import Image from "next/image";
 
-export default function CardVerticalWithTag({ image, tag, title, description }) {
+export default function CardVerticalWithTag({ image, tag, title, description, image_alt }) {
   return (
     <div className="w-full overflow-hidden cursor-pointer shadow-md shadow bg-white group rounded-md">
       <Image
         src={image}
-        alt={title}
+        alt={image_alt}
         width={800}
-        height={192}
+        height={600}
         className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
         priority
+        placeholder="blur"
+            blurDataURL="data:image/webp;base64,UklGRiwAAABXRUJQVlA4ICAAAABQAQCdASoIAAUADMDOJQAAJwEAAPc1cCYytxXdWwAAAA=="
       />
 
       <div className="p-4 flex flex-col gap-2">

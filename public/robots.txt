@@ -1,0 +1,9 @@
+# *
+User-agent: *
+Allow: /
+
+# Host
+Host: https://deepadtech.com/
+
+# Sitemaps
+Sitemap: https://deepadtech.com/sitemap.xml

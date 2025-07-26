@@ -3,7 +3,7 @@ import Image from "next/image";
 export const components = {
   h1: (props) => (
     <h1
-      className="text-4xl font-bold mt-10 mb-6 text-gray-800 leading-tight tracking-tight"
+      className="text-4xl font-bold mt-10 mb-6 leading-tight tracking-tight uppercase font-sans font-bold"
       {...props}
     />
   ),
@@ -14,17 +14,31 @@ export const components = {
     />
   ),
   h3: (props) => (
-    <h3 className="text-xl font-semibold mt-6 mb-3 text-gray-700" {...props} />
+    <h3 className="text-xl font-semibold mt-6 mb-3 " {...props} />
   ),
-  p: ({ node, children }) => {
-    // Check if the only child is an image
-    const isImageOnly =
-      node.children &&
-      node.children.length === 1 &&
-      node.children[0].tagName === "img";
 
-    if (isImageOnly) return <>{children}</>; // don’t wrap in <p>
-    return <p>{children}</p>;
+  hr: () => null,
+  a: (props) => (
+  <a
+    className="text-blue-600 underline hover:text-blue-800 transition-colors"
+    {...props}
+  />
+),
+  p: ({ node, children }) => {
+    const containsOnlyInlineContent = node.children.every(
+      (child) =>
+        child.type === "text" ||
+        child.tagName === "a" ||
+        child.tagName === "strong" ||
+        child.tagName === "em" ||
+        child.tagName === "code" // Add more inline tags as needed
+    );
+
+    if (!containsOnlyInlineContent) {
+      return <>{children}</>; // Avoid wrapping block-level elements in <p>
+    }
+
+    return <p className="mb-4 leading-relaxed">{children}</p>;
   },
   img: ({ alt, src }) => (
     <figure className="my-6">
@@ -32,13 +46,14 @@ export const components = {
         alt={alt}
         src={src}
         width={800}
-        height={0}
-        style={{ height: "auto" }}
+        height={600}
         className="rounded-md shadow-md object-cover"
         priority
+        placeholder="blur"
+        blurDataURL="data:image/webp;base64,UklGRiwAAABXRUJQVlA4ICAAAABQAQCdASoIAAUADMDOJQAAJwEAAPc1cCYytxXdWwAAAA=="
       />
       {alt && (
-        <figcaption className="text-sm text-gray-500 text-center mt-2 italic">
+        <figcaption className="text-sm text-center mt-2 italic">
           {alt}
         </figcaption>
       )}
@@ -47,7 +62,7 @@ export const components = {
   table: (props) => (
     <div className="overflow-x-auto my-6">
       <table
-        className="w-full border-collapse text-sm text-gray-700"
+        className="w-full border-collapse text-sm"
         {...props}
       />
     </div>
@@ -66,25 +81,25 @@ export const components = {
     />
   ),
   th: (props) => (
-    <th className="px-4 py-2 font-semibold text-gray-800" {...props} />
+    <th className="px-4 py-2 font-semibold" {...props} />
   ),
-  td: (props) => <td className="px-4 py-2 text-gray-700" {...props} />,
+  td: (props) => <td className="px-4 py-2" {...props} />,
   ul: (props) => (
     <ul
-      className="list-disc pl-6 mb-5 text-gray-700 leading-relaxed"
+      className="list-disc pl-6 mb-5  leading-relaxed"
       {...props}
     />
   ),
   ol: (props) => (
     <ol
-      className="list-decimal pl-6 mb-5 text-gray-700 leading-relaxed"
+      className="list-decimal pl-6 mb-5 leading-relaxed"
       {...props}
     />
   ),
   li: (props) => <li className="mb-1">{props.children}</li>,
   blockquote: (props) => (
     <blockquote
-      className="border-l-4 border-blue-400 pl-4 italic text-gray-600 my-6 bg-blue-50 p-3 rounded-md"
+      className="border-l-4 border-blue-400 pl-4 italic my-6 bg-blue-50 p-3 rounded-md"
       {...props}
     />
   ),

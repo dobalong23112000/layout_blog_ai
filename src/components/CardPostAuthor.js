@@ -1,25 +1,30 @@
 
 import Image from 'next/image';
+import { format } from 'date-fns';
 export default function CardPostAuthor({
-  author,
+  authors,
   title,
   description,
-  publishDate,
   readTime,
+  published_at,
 }) {
   return (
     <div className="shadow shadow-md overflow-hidden bg-white flex flex-col transition hover:shadow-md rounded-md">
       {/* Author Header */}
       <div className="flex items-center gap-3 bg-primary px-4 py-3">
-        <Image
-          src={author.avatar}
-          alt={author.name}
+        {authors?.avatar_url && 
+        (<Image
+          src={authors.avatar_url}
+          alt={authors.name}
           width={800}
-          height={600}
+          height={800}
           className="w-15 h-15 object-cover rounded-full"
           priority
-        />
-        <span className="text-sm font-medium text-gray-700 text-white">{author.name}</span>
+          placeholder="blur"
+            blurDataURL="data:image/webp;base64,UklGRiwAAABXRUJQVlA4ICAAAABQAQCdASoIAAUADMDOJQAAJwEAAPc1cCYytxXdWwAAAA=="
+        />)}
+        
+        <span className="text-sm font-medium text-gray-700 text-white">{authors?.name}</span>
       </div>
 
       {/* Content */}
@@ -36,8 +41,8 @@ export default function CardPostAuthor({
 
         {/* Meta */}
         <div className="flex justify-between text-xs text-gray-500">
-          <span>{publishDate}</span>
-          <span>{readTime}</span>
+          <span>{format(new Date(published_at ?? null), 'dd/MM/yyyy') }</span>
+          <span>{readTime ?? '4 min read'}</span>
         </div>
       </div>
     </div>

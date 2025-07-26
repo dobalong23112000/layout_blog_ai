@@ -17,7 +17,12 @@ body {
   --color-secondary: #F4F1EE;
   --color-accent: #FBC02D;
 }
-
+@layer base {
+  h1::first-letter {
+    font-size: inherit;
+    font-weight: inherit;
+  }
+}
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
@@ -28,5 +33,5 @@ body {
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: Manrope, "Manrope Fallback", sans-serif;
 }
